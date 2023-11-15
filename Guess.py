@@ -3,7 +3,7 @@ import os
 debug = False
 
 wrdlst = []
-letters_guessed = ""
+letters_guessed = []
 current_guessed = "----"
 
 class Guess_Class:
@@ -29,9 +29,12 @@ class Guess_Class:
         
         # The code block you provided is responsible for validating the user's input when they are
         # guessing a letter.
-        while(len(temp) > 1):
-            temp = input("Enter one letter only: ")
-            while(temp in letters_guessed):
+        while(len(temp) > 1 or temp in letters_guessed):
+
+            if(len(temp) > 1):
+                temp = input("Enter one letter only: ")
+
+            else:
                 print("You already checked for the letter: " + temp)
                 temp = input("Enter another letter: ")
 
@@ -68,7 +71,7 @@ class Guess_Class:
             print("@@ FEEDBACK: Try something else." , temp , "is not in the word.")
             print("@@")
 
-        letters_guessed = letters_guessed + " " + temp ## update the 'letters_guessed' variable
+        letters_guessed.append(temp)
 
         if(debug):
             print("From Debug:")
@@ -80,8 +83,67 @@ class Guess_Class:
         temp = input("\n\nPress any key to continue ... ")
         
     
-    def guess_word(current_word : str):
+    def guess_word(current_word : str) -> bool:
+        """_summary_
+            The function `guess_word` takes a current word as input and prompts the user to guess the word,
+            providing feedback and returning True if the guess is correct, and False otherwise.
         
+        Args:
+            current_word (str): The current_word parameter is a string that represents the word that the
+                                user needs to guess
+
+        Returns:
+            bool:   The function `guess_word` returns a boolean value. It returns `True` if the user's
+                    guessed word matches the current word (ignoring case), indicating that the guess was correct. It
+                    returns `False` if the guessed word does not match the current word, indicating that the guess
+                    was incorrect.
+        """
+        
+        
+        guessed_word = input("\nMake your guess: ") ## ask user input
+
+        # The code is checking if the guessed word is equal to the current word(ignoring case).
+        # If it is, it means the user has made a correct guess and the function
+        # returns True. It also provides feedback to the user by printing a message.
+        if guessed_word == current_word.lower():
+            print("\n@@")
+            print("@@ FEEDBACK: Your're Cool. you made a correct guess!")
+            print("@@")
+            temp = input("\n\nPress any key to continue ... ")
+            return True
+        
+        # The `else` block is executed when the user's guessed word does not match the current word.
+        # It provides feedback to the user by printing a message 
+        # and prompts the user to press any key to continue. 
+        # Finally, it returns `False` to
+        # indicate that the user's guess was incorrect.
+        else:
+            print("\n@@")
+            print("@@ FEEDBACK: Can't even guess a word ? Try again...")
+            print("@@")
+            temp = input("\n\nPress any key to continue ... ")
+            return False
+        
+    
+    def user_gave_up(current_word: str) -> str:
+        """
+        When user gives up, show them what was the word.
+        Args:
+            current_word (str): The current_word parameter is a string that represents the word that the
+                                user needs to guess
+
+        Returns:
+            str: the current word.
+        """
+        print("\n@@")
+        print("@@ FEEDBACK: You gave up !!! You could easily guessed this... '" + current_word + "'")
+        print("@@")
+        
+        temp = input("\n\nPress any key to continue ... ")
+
+        return current_word
+
+
 
     def main_screen(current_word : str , test_allowed:bool):
         """This function displays a welcome screen with options for users."""
@@ -103,8 +165,10 @@ class Guess_Class:
 
         #Main Menu:
         print("Current Guess:" ,current_guessed)
-        print("Letters Guessed:" ,letters_guessed , "\n")
-        print("g = guess , t = tell me, l for a letter, and q to quit")
+        print("Letters Guessed:" , end = " ")
+        for i in letters_guessed:
+            print(i , end = " ")
+        print("\n\ng = guess , t = tell me, l for a letter, and q to quit")
 
         if(debug):
             print("From Debug:")
@@ -127,5 +191,15 @@ class Guess_Class:
         elif choice_from_main_menu == 'l':
             Guess_Class.guess_a_letter(current_word)
 
+        elif choice_from_main_menu == 'g':
+            if(Guess_Class.guess_word(current_word)):
+                current_guessed = current_word
+
+        elif choice_from_main_menu == 't':
+            current_guessed = Guess_Class.user_gave_up(current_word)
+
+        
         while '-' in current_guessed:
             Guess_Class.main_screen(current_word , test_allowed)
+
+        Guess_Class.quit_game()
