@@ -3,7 +3,7 @@ import sys
 import Guess
 import StringDatabase
 
-debug = False
+debug = True
 
 if __name__ == "__main__":
 
@@ -19,8 +19,10 @@ if __name__ == "__main__":
         test_allowed = True
         print("Test has been allowed")
 
-
     strdtbs1 = StringDatabase.StringDataBase()
-    current_word = strdtbs1.readFile()
-    Guess.Guess_Class.main_screen(current_word , test_allowed)
+    strdtbs1.readFile()
+
+    while (True):
+        current_word = strdtbs1.provide_a_random_word()
+        Guess.Guess_Class.main_screen(current_word , test_allowed)
     

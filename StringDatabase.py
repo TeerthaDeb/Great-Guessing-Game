@@ -1,10 +1,10 @@
 import random
 
 wordlst = []
-debug = False
+debug = True
 
 class StringDataBase:
-    def readFile(self) -> list:
+    def readFile(self) -> str:
 
         """
             The function `readFile()` reads a file named "four_letters.txt" and filters out all the words
@@ -36,6 +36,8 @@ class StringDataBase:
                             # After processing one line (i.e., after reading a set of four letter words), we remove
                     lines = file.read().split()
 
+            file.close()
+
         except FileNotFoundError as e:
             '''
                 If an error occurs while opening or reading from the file (e.g., the file does not exist),
@@ -53,5 +55,15 @@ class StringDataBase:
         if(debug):
             print("The word list is: ")
             print(wordlst)
+            input("press any key to move further")
 
-        return wordlst[random.randint(0 , len(wordlst))]
+        return self.provide_a_random_word()
+        
+    
+    def provide_a_random_word(self) -> str:
+        global wordlst
+        s = wordlst[random.randint(0 , len(wordlst))]
+        if(debug):
+            print("Randomly selected word : ",s)
+            input("press any key to continue")
+        return s

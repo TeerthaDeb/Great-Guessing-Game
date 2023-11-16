@@ -1,3 +1,5 @@
+import os
+
 ### letter_frequency comes from A2 Assignment instruction itself.
 letter_frequency = {
     'a': 8.17,
@@ -33,37 +35,86 @@ letter_frequency = {
 class Game_Class:
     
     score = 0
-    letters_guessed = 0
-    words_guessed = 0
+    good_letter_guess = 0
+    bad_letter_guess = 0
     actual_word = ""
+    good_guess = 0
+    bad_guess = 0
+    status = ""
 
     def __init__(self , word: str) -> int:
         
         self.actual_word = word
+
+        self.score = 30 ##The maximum possible score
         
         for i in word:
-            self.score += letter_frequency[i]
+            self.score -= letter_frequency[i] * 2 / 10  ## Decrease the maximum scoring possiblity by the letter_frequency. So that there are equal distribution of scores for all the words.
+    
+    ##getters:
 
+    def get_good_guess(self):
+        return self.good_guess
+    
+    def get_bad_guess(self):
+        return self.bad_guess
+    
+    def get_good_letter_guess(self):
+        return self.good_letter_guess
+    
+    def get_bad_letter_guess(self):
+        return self.bad_letter_guess
+    
+    def get_score(self):
+        ##must modify the score before returning
         return self.score
     
-    def wordGuessed(self , word_guessed_by_user : str):
-        if self.actual_word != word_guessed_by_user:
-            self.score -= self.score * 10/100 ##decrease 10% score
+    def get_actual_word(self):
+        return self.actual_word
+    
+    def get_status(self):
+        return self.status
+    
+    ##setters:
+    def made_good_guess(self):
+        self.status = "Success"
+        self.good_guess += 1
+        return self.get_good_guess()
+    
+    def made_bad_guess(self):
+        self.bad_guess += 1
+        return self.get_bad_guess()
+    
+    def made_good_letter_guess(self):
+        self.good_letter_guess += 1
+        if self.good_letter_guess == 4:
+            self.status = "Success"
+        return self.get_good_letter_guess()
+    
+    def made_bad_letter_guess(self):
+        self.bad_letter_guess += 1
+        return self.get_bad_letter_guess()
 
-    def letterGuessed(self , letter_user_guessed : chr):
-        
-        if letter_user_guessed not in self.actual_word: ## decrease score by 25%
-            self.score -= 25/100 * (letter_frequency[letter_user_guessed] / 2)
-        
-        else: #decrease score by 13%
-            self.score -= 13/100 * (letter_frequency[letter_user_guessed] / 2)
+    def user_gave_up(self):
+        #add something here
+        self.status = "Gave up"
+        return self.get_score()
 
     def printScore(self):
-        print(self.score)
+        scr = self.get_score()
+        print(scr)
+        return
+    
+    def print_score_borard(gameList : list):
+        os.system("cls") # clears the screen
+        print("++")
+        print("++ Game Report")
+        print("++\n")
+        final_score = 0
+        print("Game\t\tWord\t\tStatus\t\tBad Guesses\tMissed Letters\t\tScore")
+        print("----\t\t----\t\t------\t\t-----------\t--------------\t\t-----")
+        for i in range(len(gameList)):
+            print(f'{i+1 : <4d}\t\t{gameList[i].get_actual_word() : <4s}\t\t{gameList[i].get_status() : <6s}\t\t{gameList[i].get_bad_guess() : <7d}\t\t{gameList[i].get_bad_letter_guess(): <13d}\t\t{gameList[i].get_score() : <5.2f}')
+            final_score += gameList[i].score
 
-
-
-if __name__ == "__main__":
-    game = Game_Class('ohed')
-    game.wordGuessed("ohed" , "ohad")
-    game.printScore()
+        print("\n\nFinal Score:" , final_score)

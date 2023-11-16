@@ -1,6 +1,7 @@
 import os
+import Game
 
-debug = False
+debug = True
 
 wrdlst = []
 letters_guessed = []
@@ -8,11 +9,11 @@ current_guessed = "----"
 
 class Guess_Class:
 
-    def quit_game():
-        print("Goodbye!") ######### Write proper logic.
+    def quit_game(list_of_games : list):
+        Game.Game_Class.print_score_borard(list_of_games)
         exit()
 
-    def guess_a_letter(current_word : str):
+    def guess_a_letter(current_word : str , g1 : Game.Game_Class):
         """
             This Function asks user to enter an alphabet, checks the input for validity,
             upon valid input entry, the function checks the alphabet if it is in the word.
@@ -56,6 +57,7 @@ class Guess_Class:
             print("@@")
             print("@@ Wow." , temp , "occurs multiple times in the word.")
             print("@@")
+            g1.made_good_letter_guess()
 
         # The block is responsible for providing feedback to the user when they
         # guess a letter that is actually in the word or not.
@@ -63,6 +65,7 @@ class Guess_Class:
             print("@@")
             print("@@ Wow." , temp , "is actually in the word.")
             print("@@")
+            g1.made_good_letter_guess()
             
         # The block you provided is responsible for providing feedback to the user when they guess a
         # letter that is not in the word.
@@ -70,6 +73,7 @@ class Guess_Class:
             print("@@")
             print("@@ FEEDBACK: Try something else." , temp , "is not in the word.")
             print("@@")
+            g1.made_bad_letter_guess()
 
         letters_guessed.append(temp)
 
@@ -83,7 +87,7 @@ class Guess_Class:
         temp = input("\n\nPress any key to continue ... ")
         
     
-    def guess_word(current_word : str) -> bool:
+    def guess_word(current_word : str , g1 : Game.Game_Class) -> bool:
         """_summary_
             The function `guess_word` takes a current word as input and prompts the user to guess the word,
             providing feedback and returning True if the guess is correct, and False otherwise.
@@ -109,6 +113,7 @@ class Guess_Class:
             print("\n@@")
             print("@@ FEEDBACK: Your're Cool. you made a correct guess!")
             print("@@")
+            g1.made_good_guess()
             temp = input("\n\nPress any key to continue ... ")
             return True
         
@@ -121,11 +126,12 @@ class Guess_Class:
             print("\n@@")
             print("@@ FEEDBACK: Can't even guess a word ? Try again...")
             print("@@")
+            g1.made_bad_guess()
             temp = input("\n\nPress any key to continue ... ")
             return False
         
     
-    def user_gave_up(current_word: str) -> str:
+    def user_gave_up(current_word: str , g1 : Game.Game_Class) -> str:
         """
         When user gives up, show them what was the word.
         Args:
@@ -138,6 +144,7 @@ class Guess_Class:
         print("\n@@")
         print("@@ FEEDBACK: You gave up !!! You could easily guessed this... '" + current_word + "'")
         print("@@")
+        g1.user_gave_up()
         
         temp = input("\n\nPress any key to continue ... ")
 
@@ -147,59 +154,64 @@ class Guess_Class:
 
     def main_screen(current_word : str , test_allowed:bool):
         """This function displays a welcome screen with options for users."""
-        
-        os.system("cls") # Clears the screen.
 
-        print("++")
-        print("++The great guessing game")
-        print("++\n")
 
-        
-        
+        list_of_games = [] ## this list will store all the game information
+        g1 = Game.Game_Class(current_word) ## making an instance of the Game Class to hold each games data
         global letters_guessed 
         global current_guessed
+
+        while '-' in current_guessed:        
+            os.system("cls") # Clears the screen.
+
+            print("++")
+            print("++The great guessing game")
+            print("++\n")
+
             
+            
+            
+                
 
-        if(test_allowed):
-            print("Current Word:" ,current_word)
+            if(test_allowed):
+                print("Current Word:" ,current_word)
 
-        #Main Menu:
-        print("Current Guess:" ,current_guessed)
-        print("Letters Guessed:" , end = " ")
-        for i in letters_guessed:
-            print(i , end = " ")
-        print("\n\ng = guess , t = tell me, l for a letter, and q to quit")
+            #Main Menu:
+            print("Current Guess:" ,current_guessed)
+            print("Letters Guessed:" , end = " ")
+            for i in letters_guessed:
+                print(i , end = " ")
+            print("\n\ng = guess , t = tell me, l for a letter, and q to quit")
 
-        if(debug):
-            print("From Debug:")
-            print("\tletters_guessed = " , letters_guessed)
-            print("\tcurrent_word = " , current_word)
-            print("\tcurrent_guessed = " , current_guessed)
+            if(debug):
+                print("From Debug:")
+                print("\tletters_guessed = " , letters_guessed)
+                print("\tcurrent_word = " , current_word)
+                print("\tcurrent_guessed = " , current_guessed)
 
-        # This code is prompting the user to enter an option from the main menu. It checks
-        # the validity of the input.
-        # If the input is invalid, it prompts the user to re-enter the option until a valid option
-        # is provided.
-        # And if it is a valid entry, proceed next.
-        choice_from_main_menu = input("\nEnter Option: ")
-        while len(choice_from_main_menu) > 1 or not choice_from_main_menu in ['g' , 't' , 'l' , 'q']:
-            choice_from_main_menu = input("Invalid option. Please re-enter: ")
+            # This code is prompting the user to enter an option from the main menu. It checks
+            # the validity of the input.
+            # If the input is invalid, it prompts the user to re-enter the option until a valid option
+            # is provided.
+            # And if it is a valid entry, proceed next.
+            choice_from_main_menu = input("\nEnter Option: ")
+            while len(choice_from_main_menu) > 1 or not choice_from_main_menu in ['g' , 't' , 'l' , 'q']:
+                choice_from_main_menu = input("Invalid option. Please re-enter: ")
+            
+            if choice_from_main_menu == 'q':
+                Guess_Class.quit_game()
+            
+            elif choice_from_main_menu == 'l':
+                Guess_Class.guess_a_letter(current_word , g1)
+
+            elif choice_from_main_menu == 'g':
+                if(Guess_Class.guess_word(current_word , g1)):
+                    current_guessed = current_word
+
+            elif choice_from_main_menu == 't':
+                current_guessed = Guess_Class.user_gave_up(current_word , g1)
+            
         
-        if choice_from_main_menu == 'q':
-            Guess_Class.quit_game()
-        
-        elif choice_from_main_menu == 'l':
-            Guess_Class.guess_a_letter(current_word)
-
-        elif choice_from_main_menu == 'g':
-            if(Guess_Class.guess_word(current_word)):
-                current_guessed = current_word
-
-        elif choice_from_main_menu == 't':
-            current_guessed = Guess_Class.user_gave_up(current_word)
-
-        
-        while '-' in current_guessed:
-            Guess_Class.main_screen(current_word , test_allowed)
-
-        Guess_Class.quit_game()
+        list_of_games.append(g1)
+        del g1
+        Guess_Class.quit_game(list_of_games)
