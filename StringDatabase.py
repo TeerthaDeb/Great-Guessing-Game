@@ -1,16 +1,17 @@
+# The `StringDataBase` class reads a file named "four_letters.txt", filters out all the words that are
+# not 4 letters long, and provides a random word from the filtered list.
+
 import random
 
 wordlst = []
-debug = True
+debug = False
 
 class StringDataBase:
-    def readFile(self) -> str:
+    def readFile(self):
 
         """
             The function `readFile()` reads a file named "four_letters.txt" and filters out all the words
             that are not 4 letters long, storing the 4-letter words in the `wordlst` list.
-
-            :return: the list of 4-letter words, `wordlst`.
         """
         global wordlst
 
@@ -36,14 +37,14 @@ class StringDataBase:
                             # After processing one line (i.e., after reading a set of four letter words), we remove
                     lines = file.read().split()
 
-            file.close()
+            file.close() ## close the file.
 
         except FileNotFoundError as e:
             '''
                 If an error occurs while opening or reading from the file (e.g., the file does not exist),
                 And quit.
             '''
-            print("The file is not there. Please place the file into the same folder to continue.")
+            print("The file is not there. Please place the file into the same folder and run the program again to continue.")
             return
 
         except Exception as e:
@@ -56,13 +57,16 @@ class StringDataBase:
             print("The word list is: ")
             print(wordlst)
             input("press any key to move further")
-
-        return self.provide_a_random_word()
         
     
     def provide_a_random_word(self) -> str:
         global wordlst
-        s = wordlst[random.randint(0 , len(wordlst))]
+        """The function `provide_a_random_word` returns a random word from a global list called `wordlst`.
+
+        Returns:
+            str: a randomly selected word from the `wordlst` list.
+        """
+        s = wordlst[random.randint(0 , len(wordlst))] #Select a Random Word from the list
         if(debug):
             print("Randomly selected word : ",s)
             input("press any key to continue")
